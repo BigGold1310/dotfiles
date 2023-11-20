@@ -1,0 +1,47 @@
+#!/bin/sh
+# Installs the Flathub apps declared in ~/.config/flatpak/apps.yaml.
+# Linux-only; no-ops on any other OS (including Codespaces/DevPod/Docker)
+# and if the flatpak binary isn't present on this machine.
+# hash: {{ include "dot_config/flatpak/apps.yaml" | sha256sum }}
+
+{{- if or (ne .chezmoi.os "linux") .codespaces }}
+
+# Not Linux (or a Codespaces/DevPod/Docker container) — flatpak isn't
+# realistically present here. Nothing to do.
+exit 0
+{{- else }}
+
+set -eu
+
+if ! command -v flatpak >/dev/null 2>&1; then
+  echo "flatpak: binary not found, skipping Flathub app install" >&2
+  exit 0
+fi
+
+if ! command -v yq >/dev/null 2>&1; then
+  echo "flatpak: yq not found, skipping Flathub app install" >&2
+  exit 0
+fi
+
+APPS_FILE="${HOME}/.config/flatpak/apps.yaml"
+
+if [ ! -f "$APPS_FILE" ]; then
+  echo "flatpak: ${APPS_FILE} not found, skipping Flathub app install" >&2
+  exit 0
+fi
+
+# --user everywhere: avoids sudo/polkit during an unattended `chezmoi apply`,
+# and must match the --user scope of the override files managed under
+# ~/.local/share/flatpak/overrides/ (system-scope overrides live in
+# /var/lib/flatpak/overrides/ instead and would not apply to user installs).
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+yq -r '.apps[].id' "$APPS_FILE" | while IFS= read -r app_id; do
+  [ -n "$app_id" ] || continue
+  echo "flatpak: installing ${app_id}"
+  # Don't let one bad/unavailable app-id abort installation of the rest.
+  if ! flatpak install --user --assumeyes --noninteractive flathub "$app_id"; then
+    echo "flatpak: failed to install ${app_id}, continuing" >&2
+  fi
+done
+{{- end }}

@@ -1,0 +1,82 @@
+# PATH
+if ! [[ "${PATH}" =~ "${HOME}/.local/bin:${HOME}/bin:" ]]; then
+    export PATH="${HOME}/.local/bin:${HOME}/bin:${PATH}"
+fi
+
+# aqua
+export AQUA_ROOT_DIR="${HOME}/.local/share/aquaproj-aqua"
+export AQUA_GLOBAL_CONFIG="${HOME}/.config/aquaproj-aqua/aqua.yaml"
+if ! [[ "${PATH}" =~ "${AQUA_ROOT_DIR}/bin" ]]; then
+    export PATH="${AQUA_ROOT_DIR}/bin:${PATH}"
+fi
+
+
+{{ if and (not .codespaces) (eq .chezmoi.os "linux") -}}
+# SSH agent socket (native ssh-agent, socket-activated via systemd --user;
+# see dot_config/systemd/user/ssh-agent.{socket,service} and
+# .chezmoiscripts/run_onchange_after_ssh-agent.sh.tmpl). %t in the systemd
+# unit is $XDG_RUNTIME_DIR, so this must match exactly.
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/ssh-agent.socket"
+{{ end }}
+{{- /* macOS: intentionally not set — the system ships a launchd-managed
+   ssh-agent (com.openssh.ssh-agent) that already exports SSH_AUTH_SOCK into
+   every login session. Codespaces/DevPod/Docker: also intentionally not
+   set — these forward SSH_AUTH_SOCK in from the host themselves. */ -}}
+
+# Go
+export GOPATH=~/.cache/go
+
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt HIST_IGNORE_DUPS     # don't store consecutive duplicates
+setopt HIST_IGNORE_SPACE    # don't store commands prefixed with a space
+setopt SHARE_HISTORY        # share history between sessions (like bash HISTAPPEND)
+
+# Keybindings — emacs / bash-compatible
+bindkey -e
+bindkey "^[[H"  beginning-of-line
+bindkey "^[[F"  end-of-line
+bindkey "^[[3~" delete-char
+
+# Completion
+autoload -Uz compinit; compinit
+
+# fzf — Ctrl+R history, Ctrl+T file picker, Alt+C cd (requires fzf >= 0.48)
+if command -v fzf >/dev/null; then
+    eval "$(fzf --zsh)"
+fi
+
+# Prompt
+if command -v starship >/dev/null; then
+    eval "$(starship init zsh)"
+fi
+
+# Dev tools
+command -v mise   >/dev/null && eval "$(mise activate zsh --shims)"
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# Kubernetes
+if command -v kubectl >/dev/null; then
+    source <(kubectl completion zsh)
+    alias kc="kubectl"
+    if [ -d "${HOME}/.kube" ]; then
+        mkdir -p "${HOME}/.kube/configs"
+        export KUBECONFIG=~/.kube/config:$(find "${HOME}/.kube/configs/" -type f | tr '\n' ':')
+    fi
+fi
+
+# aqua
+if command -v aqua >/dev/null; then
+    eval "$(aqua completion zsh)"
+fi
+
+# devpod
+if command -v devpod >/dev/null; then
+    eval "$(devpod completion zsh)"
+fi
+
+# Aliases
+alias la="ls -la"
+alias ll="ls -l"

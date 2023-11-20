@@ -1,0 +1,36 @@
+#!/bin/sh
+# Generates a personal GPG (OpenPGP) signing key if one doesn't already
+# exist, for git commit signing (see private_dot_gitconfig.tmpl — gpg.format
+# = openpgp, no explicit user.signingkey needed: git/gpg auto-selects the
+# matching secret key from the committer identity when unset). Skipped in
+# Codespaces/DevPod/Docker — containers don't generate their own identity;
+# they reach the host's key via DevPod's own GPG Agent Forwarding (opt-in:
+# `devpod context set-options default -o GPG_AGENT_FORWARDING=true` or
+# `devpod up --gpg-agent-forwarding`), which forwards the host's live
+# gpg-agent and imports the public key + trust database automatically.
+
+{{- if .codespaces }}
+
+exit 0
+{{- else }}
+
+set -eu
+
+if ! command -v gpg >/dev/null 2>&1; then
+  echo "gpg: binary not found, skipping key generation" >&2
+  exit 0
+fi
+
+if gpg --list-secret-keys --with-colons "{{ .email }}" 2>/dev/null | grep -q '^sec'; then
+  echo "gpg: a secret key for {{ .email }} already exists, skipping" >&2
+  exit 0
+fi
+
+echo "gpg: generating a new ed25519 signing key for {{ .name }} <{{ .email }}>" >&2
+gpg --batch --pinentry-mode loopback --passphrase '' \
+  --quick-generate-key "{{ .name }} <{{ .email }}>" ed25519 sign 0
+
+fingerprint="$(gpg --list-secret-keys --with-colons "{{ .email }}" | awk -F: '/^fpr:/ {print $10; exit}')"
+echo "gpg: generated ${fingerprint} — register its public key on GitHub/GitLab (as a signing key):" >&2
+gpg --armor --export "${fingerprint}" >&2
+{{- end }}

@@ -1,0 +1,16 @@
+{{- $nerdfonts := "v3.1.1" }}
+{{- if eq .chezmoi.os "darwin" }}
+"Library/Fonts/firacode":
+  type: archive
+  url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ $nerdfonts }}/FiraCode.zip"
+"Library/Fonts/firamono":
+  type: archive
+  url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ $nerdfonts }}/FiraMono.zip"
+{{- else }}
+".local/share/fonts/firacode":
+  type: archive
+  url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ $nerdfonts }}/FiraCode.zip"
+".local/share/fonts/firamono":
+  type: archive
+  url: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ $nerdfonts }}/FiraMono.zip"
+{{- end }}

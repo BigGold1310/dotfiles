@@ -1,0 +1,14 @@
+# Declarative list of Flathub apps, installed with `flatpak install --user`.
+# .chezmoiscripts/run_onchange_after_flatpak.sh.tmpl re-runs whenever this
+# file's content changes (see the "hash:" header in that script), mirroring
+# how run_onchange_after_aqua.sh.tmpl reconciles dot_config/aquaproj-aqua/aqua.yaml.
+#
+# This list is purely additive: removing an app here does NOT uninstall it.
+# Run `flatpak uninstall --user <app-id>` manually if you want that.
+apps:
+  - id: com.github.tchx84.Flatseal   # GUI editor for the files in dot_local/share/flatpak/overrides/
+  - id: org.mozilla.firefox          # Firefox
+  - id: dev.zed.Zed                  # Zed
+  - id: app.zen_browser.zen          # Zen Browser
+  - id: com.onepassword.OnePassword  # 1Password
+  - id: com.visualstudio.code        # VS Code

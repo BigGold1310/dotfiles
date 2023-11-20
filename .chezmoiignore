@@ -1,0 +1,11 @@
+install.sh
+README.md
+{{- if .codespaces }}
+.gitconfig
+.gitconfig.work
+{{ end }}
+{{- if or (ne .chezmoi.os "linux") .codespaces }}
+.config/flatpak
+.local/share/flatpak/overrides
+.config/systemd
+{{- end }}

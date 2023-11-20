@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/aqua-yaml.json
+$schema: https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/aqua-yaml.json
+registries:
+  - type: standard
+    ref: v4.558.1 # renovate: depName=aquaproj/aqua-registry
+
+packages:
+  - name: twpayne/chezmoi@v2.72.1
+  - name: junegunn/fzf@v0.62.0
+  - name: jqlang/jq@jq-1.7.1
+  - name: mikefarah/yq@v4.45.1
+  - name: typst/typst@v0.13.1
+  - name: starship/starship@v1.22.1
+{{- if .codespaces }}
+  - name: anthropics/claude-code@v2.1.263
+{{ else }}
+  - name: loft-sh/devpod@v0.6.15
+{{ end }}

@@ -1,0 +1,37 @@
+#!/bin/sh
+# Generates a separate per-machine ed25519 keypair for GitHub and GitLab if
+# they don't already exist (see private_dot_ssh/conf.d/chezmoi.conf.tmpl for
+# the matching Host blocks). Skipped in Codespaces/DevPod/Docker — ephemeral
+# containers shouldn't accumulate their own registered keys.
+
+{{- if .codespaces }}
+
+exit 0
+{{- else }}
+
+set -eu
+
+if ! command -v ssh-keygen >/dev/null 2>&1; then
+  echo "ssh-keygen: binary not found, skipping key generation" >&2
+  exit 0
+fi
+
+mkdir -p "${HOME}/.ssh"
+chmod 700 "${HOME}/.ssh"
+
+generate_key() {
+  key_path="$1"
+  comment="$2"
+  if [ -f "${key_path}" ]; then
+    echo "ssh-keygen: ${key_path} already exists, skipping" >&2
+    return 0
+  fi
+  echo "ssh-keygen: generating ${key_path}" >&2
+  ssh-keygen -t ed25519 -a 100 -N "" -C "${comment}" -f "${key_path}"
+  echo "ssh-keygen: register this public key on the corresponding account:" >&2
+  cat "${key_path}.pub" >&2
+}
+
+generate_key "${HOME}/.ssh/id_ed25519_github" "{{ .chezmoi.username }}@{{ .chezmoi.hostname }}-github"
+generate_key "${HOME}/.ssh/id_ed25519_gitlab" "{{ .chezmoi.username }}@{{ .chezmoi.hostname }}-gitlab"
+{{- end }}

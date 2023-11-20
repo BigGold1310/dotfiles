@@ -1,0 +1,21 @@
+#!/bin/sh
+# Enables the native OpenSSH ssh-agent as a socket-activated systemd --user
+# unit. Linux-only; no-ops elsewhere (including Codespaces/DevPod/Docker,
+# which forward the host's own agent in) and if systemctl isn't present.
+# hash: {{ printf "%s%s" (include "dot_config/systemd/user/ssh-agent.socket") (include "dot_config/systemd/user/ssh-agent.service") | sha256sum }}
+
+{{- if or (ne .chezmoi.os "linux") .codespaces }}
+
+exit 0
+{{- else }}
+
+set -eu
+
+if ! command -v systemctl >/dev/null 2>&1; then
+  echo "ssh-agent: systemctl not found, skipping systemd --user setup" >&2
+  exit 0
+fi
+
+systemctl --user daemon-reload
+systemctl --user enable --now ssh-agent.socket
+{{- end }}

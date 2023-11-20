@@ -1,0 +1,17 @@
+#!/bin/sh
+# Ensures `Include conf.d/*.conf` is the first line of ~/.ssh/config, without
+# otherwise touching existing content — chezmoi only owns the fragment(s)
+# under ~/.ssh/conf.d/ (see conf.d/chezmoi.conf.tmpl), not the whole file, so
+# manual Host blocks added directly to ~/.ssh/config survive `chezmoi apply`.
+set -eu
+
+INCLUDE_LINE="Include conf.d/*.conf"
+current="$(cat)"
+
+if [ -z "${current}" ]; then
+  printf '%s\n' "${INCLUDE_LINE}"
+elif printf '%s\n' "${current}" | grep -qxF "${INCLUDE_LINE}"; then
+  printf '%s\n' "${current}"
+else
+  printf '%s\n\n%s\n' "${INCLUDE_LINE}" "${current}"
+fi

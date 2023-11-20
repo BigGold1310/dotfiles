@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenSSH Authentication Agent
+Documentation=man:ssh-agent(1)
+Requires=ssh-agent.socket
+After=ssh-agent.socket
+
+[Service]
+Type=simple
+# ssh-agent doesn't support real socket activation; remove the (unconnected)
+# socket file systemd pre-created so ssh-agent can bind it itself.
+ExecStartPre=-/bin/rm -f %t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a %t/ssh-agent.socket
+Restart=on-failure
+
+[Install]
+Also=ssh-agent.socket

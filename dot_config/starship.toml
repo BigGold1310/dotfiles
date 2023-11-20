@@ -1,0 +1,76 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[](fg:navy)\
+[  ](bg:navy fg:white)\
+[](bg:king_blue fg:navy)\
+$directory\
+[](fg:king_blue bg:cobalt)\
+$git_branch\
+$git_status\
+[](fg:cobalt)\
+$line_break$character"""
+
+palette = 'personal'
+
+add_newline = true
+
+[palettes.personal]
+navy       = '#0d1b4b'   # deep anchor navy
+king_blue  = '#1a56db'   # king / royal blue
+cobalt     = '#0f4c8a'   # cobalt — git segment
+sky        = '#60a5fa'   # soft sky blue (accents)
+ice        = '#bfdbfe'   # ice — status symbols on cobalt
+white      = '#ffffff'
+green      = '#4ade80'
+red        = '#f87171'
+yellow     = '#fbbf24'
+
+[directory]
+style = "bg:king_blue fg:white"
+format = "[$read_only ]($read_only_style)[$path ]($style)"
+truncation_length = 0
+truncate_to_repo = true
+truncation_symbol = "…/"
+before_repo_root_style = "bg:king_blue fg:white"
+repo_root_style = "bold fg:ice bg:king_blue"
+read_only_style = "bg:king_blue fg:white"
+repo_root_format = "[$read_only ]($read_only_style)[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path ]($style)"
+
+[git_branch]
+symbol = " "
+style = "bg:cobalt fg:white"
+format = "[$symbol$branch ]($style)"
+
+[git_status]
+style = "bg:cobalt fg:ice"
+format = "[$all_status$ahead_behind ]($style)"
+conflicted = "≠"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+up_to_date = ""
+untracked = "?"
+stashed = "s"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](yellow)"
+
+[line_break]
+disabled = false
+
+[cmd_duration]
+min_time = 2000
+format = "[$duration ]($style)"
+style = "sky"
+
+[kubernetes]
+format = "[⎈ $context( \\($namespace\\))]($style) "
+disabled = false
+style = "bold sky"
