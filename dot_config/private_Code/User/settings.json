@@ -1,0 +1,31 @@
+{
+    "dev.containers.dockerPath": "docker",
+    "redhat.telemetry.enabled": false,
+    "tabnine.experimentalAutoImports": true,
+    "remote.SSH.enableAgentForwarding": true,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "diffEditor.hideUnchangedRegions.enabled": true,
+    "telemetry.telemetryLevel": "off",
+    "git.confirmSync": false,
+    "gopls": {
+        "ui.semanticTokens": true,
+        "formatting.gofumpt": true
+    },
+    "dev.containers.defaultExtensions": [
+        "mutantdino.resourcemonitor",
+        "eamodio.gitlens",
+        "TabNine.tabnine-vscode"
+    ],
+    "remote.SSH.defaultExtensions": [
+        "mutantdino.resourcemonitor",
+        "eamodio.gitlens",
+        "TabNine.tabnine-vscode"
+    ],
+    "editor.formatOnSave": true,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "cSpell.userWords": [
+        "devcontainers"
+    ],
+    "gitlens.codeLens.visibility": "off"
+}

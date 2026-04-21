@@ -1,0 +1,5 @@
+#!/bin/sh
+# Reinstalls aqua packages whenever aqua.yaml changes.
+# hash: {{ include "dot_config/aquaproj-aqua/aqua.yaml.tmpl" | sha256sum }}
+export AQUA_GLOBAL_CONFIG="${HOME}/.config/aquaproj-aqua/aqua.yaml"
+aqua install -a

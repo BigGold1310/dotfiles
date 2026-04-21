@@ -1,0 +1,6 @@
+install.sh
+README.md
+{{- if .codespaces }}
+.gitconfig
+.gitconfig.work
+{{ end }}

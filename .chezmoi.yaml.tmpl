@@ -1,0 +1,5 @@
+{{- $codespaces:= or (env "CODESPACES" | not | not) (env "DEVPOD" | not | not) (env "DOCKER" | not | not) -}}
+sourceDir: {{ .chezmoi.sourceDir | quote }}
+
+data:
+  codespaces: {{ $codespaces }}

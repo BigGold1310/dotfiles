@@ -1,0 +1,34 @@
+{{ $credentialHelper := "NOT DEFINED" -}}
+{{ $credentialCredentialStore := "NOT DEFINED" -}}
+{{ if eq .chezmoi.os "linux" }}
+{{ $credentialHelper = "/home/cyrill/.dotnet/tools/git-credential-manager" -}}
+{{ $credentialCredentialStore = "secretservice" -}}
+{{ else if eq .chezmoi.os "darwin" }}
+{{ $credentialHelper = "/usr/local/bin/git-credential-manager" -}}
+{{ $credentialCredentialStore = "keychain" -}}
+{{ end }}
+[user]
+	name = Cyrill Näf
+	email = cyrill.naef@gmail.com
+	{{- if not .codespaces }}
+	signingkey = REPLACE_WITH_GPG_KEY_FINGERPRINT
+	{{- end }}
+[core]
+	autocrlf = input
+{{- if not .codespaces }}
+[commit]
+	gpgsign = true
+[gpg]
+	format = openpgp
+[credential]
+	helper = {{ $credentialHelper }}
+	credentialStore = {{ $credentialCredentialStore }}
+[includeIf "gitdir:~/workspace/gitlab.sehlat.io/"]
+	path = ~/.gitconfig.work
+{{- end }}
+[alias]
+	unstage = reset HEAD --
+	last    = log -1 HEAD
+	graph   = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	amend   = commit --amend --no-edit
+	undo    = reset --soft HEAD~1

@@ -1,0 +1,63 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$username\
+$hostname\
+$directory\
+$kubernetes\
+$cmd_duration\
+$character"""
+
+right_format = """
+$git_branch\
+$git_state\
+$git_status\
+"""
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+[directory]
+style = "bold cyan"
+truncate_to_repo = true
+truncation_length = 0
+repo_root_style = "bold bright-blue"
+before_repo_root_style = "bold cyan"
+truncation_symbol = ".../"
+
+[character]
+success_symbol = "[](bold purple)"
+error_symbol = "[✗](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[cmd_duration]
+min_time = 500
+format = '[$duration]($style)'
+style = "bold yellow"
+
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style) '
+style = "purple"
+
+[git_state]
+style = "yellow"
+
+[git_status]
+conflicted = '🏳'
+ahead = '🏎💨'
+behind = '😰'
+diverged = '😵'
+up_to_date = '✓'
+untracked = '🤷'
+stashed = '📦'
+modified = '📝'
+staged = '[++\($count\)](green)'
+renamed = '👅'
+deleted = '🗑'
+
+[kubernetes]
+format = '[\[$symbol$context[>](bold bright-white)[$namespace](bold bright-blue)\]]($style) '
+disabled = false
+style = 'bold blue'
+
