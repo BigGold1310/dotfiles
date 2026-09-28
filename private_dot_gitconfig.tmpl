@@ -10,6 +10,7 @@
 [user]
 	name = {{ .name }}
 	email = {{ .email }}
+	signingkey = {{ .email }}
 [core]
 	autocrlf = input
 {{- if not .codespaces }}
@@ -21,6 +22,8 @@
 	helper = {{ $credentialHelper }}
 	credentialStore = {{ $credentialCredentialStore }}
 {{- end }}
+[push]
+	autoSetupRemote = true
 [alias]
 	unstage = reset HEAD --
 	last    = log -1 HEAD
